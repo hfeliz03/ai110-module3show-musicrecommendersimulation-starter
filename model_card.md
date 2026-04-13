@@ -2,110 +2,58 @@
 
 ## 1. Model Name  
 
-Give your model a short, descriptive name.  
-Example: **VibeFinder 1.0**  
+**VibeFinder 1.0**
 
 ---
 
 ## 2. Intended Use  
 
-Describe what your recommender is designed to do and who it is for. 
-
-Prompts:  
-
-- What kind of recommendations does it generate  
-- What assumptions does it make about the user  
-- Is this for real users or classroom exploration  
+This recommender suggests songs from a small class dataset. It tries to match a user's favorite genre, mood, energy level, and acoustic preference. It is made for classroom exploration and learning. It is not meant for real music streaming users or high-stakes decisions.
 
 ---
 
 ## 3. How the Model Works  
 
-Explain your scoring approach in simple language.  
-
-Prompts:  
-
-- What features of each song are used (genre, energy, mood, etc.)  
-- What user preferences are considered  
-- How does the model turn those into a score  
-- What changes did you make from the starter logic  
-
-Avoid code here. Pretend you are explaining the idea to a friend who does not program.
+The model looks at each song one by one. It gives points if the genre matches and if the song is close to the user's target energy. It also gives points when the acousticness matches the user's preference. In one experiment, I turned off the mood bonus to see how much mood affected the rankings. After scoring every song, the system sorts the list and returns the top matches.
 
 ---
 
 ## 4. Data  
 
-Describe the dataset the model uses.  
-
-Prompts:  
-
-- How many songs are in the catalog  
-- What genres or moods are represented  
-- Did you add or remove data  
-- Are there parts of musical taste missing in the dataset  
+The dataset has 18 songs. Each song has a title, artist, genre, mood, energy, tempo, valence, danceability, and acousticness. The catalog includes styles like pop, lofi, rock, metal, ambient, jazz, hip hop, house, and folk. The dataset is very small, so many kinds of music taste are missing. Some moods and genre combinations are also underrepresented.
 
 ---
 
 ## 5. Strengths  
 
-Where does your system seem to work well  
-
-Prompts:  
-
-- User types for which it gives reasonable results  
-- Any patterns you think your scoring captures correctly  
-- Cases where the recommendations matched your intuition  
+The system works best for simple profiles with clear preferences. It did a good job for High-Energy Pop, Chill Lofi, and Deep Intense Rock. In those cases, the top songs mostly matched the expected vibe. The scoring is also easy to explain because each recommendation has a reason.
 
 ---
 
 ## 6. Limitations and Bias 
 
-Where the system struggles or behaves unfairly. 
-
-Prompts:  
-
-- Features it does not consider  
-- Genres or moods that are underrepresented  
-- Cases where the system overfits to one preference  
-- Ways the scoring might unintentionally favor some users  
+The system can over-focus on genre and energy. That can create a small filter bubble where the same songs keep showing up. "Gym Hero" appeared often because it matches high energy well, even when the rest of the vibe was not right. The dataset is also small, so users with unusual tastes do not get many good options. This means the system may feel repetitive or unfair for people whose preferences do not fit the catalog.
 
 ---
 
 ## 7. Evaluation  
 
-How you checked whether the recommender behaved as expected. 
-
-Prompts:  
-
-- Which user profiles you tested  
-- What you looked for in the recommendations  
-- What surprised you  
-- Any simple tests or comparisons you ran  
-
-No need for numeric metrics unless you created some.
+I tested five profiles: High-Energy Pop, Chill Lofi, Deep Intense Rock, Adversarial: High Energy But Sad, and Edge Case: Acoustic Metal. I compared the top five songs for each profile and checked whether the results matched the user's vibe. I also tried an experiment where I removed the mood bonus from scoring. The biggest surprise was that "Gym Hero" kept showing up for profiles that only partly matched it. That showed me the system can reward one strong feature too much.
 
 ---
 
 ## 8. Future Work  
 
-Ideas for how you would improve the model next.  
-
-Prompts:  
-
-- Additional features or preferences  
-- Better ways to explain recommendations  
-- Improving diversity among the top results  
-- Handling more complex user tastes  
+I would add more songs and more kinds of moods. I would tune the weights so one feature does not dominate the whole result. I would also add a diversity rule so the top five songs are less repetitive.
 
 ---
 
 ## 9. Personal Reflection  
 
-A few sentences about your experience.  
+My biggest learning moment was seeing how one small scoring rule could change the whole feel of the recommender. When I removed the mood bonus, the results became less personal and more repetitive. That helped me understand that building a system is not just about making it run. It is also about checking whether the logic matches what a real person means.
 
-Prompts:  
+AI tools helped me move faster when I was writing code, fixing imports, and organizing my files. They were especially helpful for turning ideas into working steps. But I still had to double-check the outputs and think about whether the recommendations actually made sense. The code could run and still give results that felt wrong for the user.
 
-- What you learned about recommender systems  
-- Something unexpected or interesting you discovered  
-- How this changed the way you think about music recommendation apps  
+What surprised me most is that a simple algorithm can still feel like a recommendation system. Even a few scoring rules can create results that look thoughtful at first. At the same time, that feeling can be misleading, because the system may only be matching one or two features really well.
+
+If I extended this project, I would add more user preference types and a larger song catalog. I would also test ways to increase diversity so the same songs do not appear too often. I would want the recommender to balance accuracy with variety, so it feels both useful and less repetitive.

@@ -47,7 +47,6 @@ class Recommender:
         # TODO: Implement explanation logic
         return "Explanation placeholder"
 
-# Reads the CSV catalog and converts numeric fields into Python numbers.
 def load_songs(csv_path: str) -> List[Dict]:
     """
     Loads songs from a CSV file.
@@ -75,7 +74,6 @@ def load_songs(csv_path: str) -> List[Dict]:
 
     return songs
 
-# Computes a weighted score and explanation list for one song and one user profile.
 def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
     """
     Scores a single song against user preferences.
@@ -89,10 +87,10 @@ def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
         score += 2.0
         reasons.append("genre match (+2.0)")
 
-    # Award points for mood match
-    if user_prefs["favorite_mood"].lower() == song["mood"].lower():
-        score += 1.5
-        reasons.append("mood match (+1.5)")
+    # Experimental change: disable the mood bonus to test ranking sensitivity.
+    # if user_prefs["favorite_mood"].lower() == song["mood"].lower():
+    #     score += 1.5
+    #     reasons.append("mood match (+1.5)")
 
     # Calculate score for energy preference
     energy_diff = abs(user_prefs["target_energy"] - song["energy"])
@@ -110,7 +108,6 @@ def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
 
     return score, reasons
 
-# Scores every song, sorts the catalog by score, and returns the top matches.
 def recommend_songs(user_prefs: Dict, songs: List[Dict], k: int = 5) -> List[Tuple[Dict, float, str]]:
     """
     Functional implementation of the recommendation logic.

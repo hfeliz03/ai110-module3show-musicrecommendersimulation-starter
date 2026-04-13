@@ -98,6 +98,24 @@ Here is a sample run of the recommender from the command line:
 
 ![Sample recommender output](assets-recommender-output.png)
 
+Additional profile runs:
+
+#### Chill Lofi
+
+![Chill Lofi output](chill-lofi-output.png)
+
+#### Deep Intense Rock
+
+![Deep Intense Rock output](deep-intense-rock-output.png)
+
+#### Adversarial: High Energy But Sad
+
+![Adversarial High Energy But Sad output](adversarial-high-energy-but-sad-output.png)
+
+#### Edge Case: Acoustic Metal
+
+![Edge Case Acoustic Metal output](edge-case-acoustic-metal-output.png)
+
 ---
 
 ## Experiments You Tried
