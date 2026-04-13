@@ -17,17 +17,45 @@ Replace this paragraph with your own summary of what your version does.
 
 ## How The System Works
 
-Explain your design in plain language.
+Real-world recommendation systems often combine user behavior, audio or content features, and patterns learned from millions of other listeners. This simulation is much simpler and more transparent. Instead of learning from clicks, skips, playlists, or watch time, my version compares each song directly to a user's taste profile and gives higher scores to songs that match the user's preferred genre and mood and are numerically close to the user's target vibe. The system prioritizes clear, explainable features over complexity so it is easy to understand why one song ranks above another.
 
-Some prompts to answer:
+Specific features used in this simulation:
 
-- What features does each `Song` use in your system
-  - For example: genre, mood, energy, tempo
-- What information does your `UserProfile` store
-- How does your `Recommender` compute a score for each song
-- How do you choose which songs to recommend
+- `Song` stores `id`, `title`, `artist`, `genre`, `mood`, `energy`, `tempo_bpm`, `valence`, `danceability`, and `acousticness`.
+- `UserProfile` stores `favorite_genre`, `favorite_mood`, `target_energy`, and `likes_acoustic`.
+- The functional version may also use user targets for `valence` and `danceability` when comparing songs more precisely.
 
-You can include a simple diagram or bullet list if helpful.
+Finalized Algorithm Recipe:
+
+- Start each song with a score of `0.0`.
+- Add `+2.0` points if the song's `genre` matches the user's favorite genre.
+- Add `+1.5` points if the song's `mood` matches the user's favorite mood.
+- Add up to `+1.5` points based on how close the song's `energy` is to the user's target energy.
+- Add up to `+1.0` points based on how close the song's `valence` is to the user's target valence.
+- Add up to `+1.0` points based on how close the song's `danceability` is to the user's target danceability.
+- Add `+0.5` points if the song's `acousticness` matches whether the user likes more acoustic songs.
+- After every song is scored, sort all songs from highest score to lowest score and return the top `k` recommendations.
+
+For the numeric features, the system uses closeness instead of simply rewarding larger or smaller values. A simple formula is:
+
+```python
+similarity = max(0.0, 1 - abs(song_value - target_value))
+```
+
+This keeps the feature score in a `0` to `1` range before applying weights, so songs closer to the target get more credit.
+
+Data flow:
+
+- Input: a user profile with preferences such as favorite genre, favorite mood, target energy, and acoustic preference.
+- Process: loop through every song in `data/songs.csv`, apply the scoring recipe, and save the score and explanation.
+- Output: sort the songs by score and return the top recommendations.
+
+Potential biases and limitations:
+
+- This system might over-prioritize genre, which could hide good cross-genre songs that still match the user's mood and energy.
+- Exact mood matching can be too rigid because moods like `relaxed`, `chill`, and `dreamy` may feel similar to a listener even if the labels are different.
+- Because the dataset is small, the recommender may reflect the limited range of genres and moods in the CSV more than the full variety of real music taste.
+- The system does not learn from user behavior over time, so it cannot adapt when a person's preferences change from one listening session to another.
 
 ---
 
@@ -63,6 +91,12 @@ pytest
 ```
 
 You can add more tests in `tests/test_recommender.py`.
+
+### Example Output
+
+Here is a sample run of the recommender from the command line:
+
+![Sample recommender output](assets-recommender-output.png)
 
 ---
 
@@ -208,4 +242,3 @@ A few sentences about what you learned:
 - What surprised you about how your system behaved
 - How did building this change how you think about real music recommenders
 - Where do you think human judgment still matters, even if the model seems "smart"
-
