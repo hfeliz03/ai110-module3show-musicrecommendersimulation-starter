@@ -40,12 +40,41 @@ class Recommender:
         self.songs = songs
 
     def recommend(self, user: UserProfile, k: int = 5) -> List[Song]:
-        # TODO: Implement recommendation logic
-        return self.songs[:k]
+        ranked_songs = sorted(
+            self.songs,
+            key=lambda song: self._score_song(user, song)[0],
+            reverse=True,
+        )
+        return ranked_songs[:k]
 
     def explain_recommendation(self, user: UserProfile, song: Song) -> str:
-        # TODO: Implement explanation logic
-        return "Explanation placeholder"
+        score, reasons = self._score_song(user, song)
+        return f"{song.title} scored {score:.2f} because it matched " + ", ".join(reasons) + "."
+
+    def _score_song(self, user: UserProfile, song: Song) -> Tuple[float, List[str]]:
+        score = 0.0
+        reasons: List[str] = []
+
+        if user.favorite_genre.lower() == song.genre.lower():
+            score += 2.0
+            reasons.append("your favorite genre")
+
+        if user.favorite_mood.lower() == song.mood.lower():
+            score += 1.5
+            reasons.append("your favorite mood")
+
+        energy_score = 1.5 * max(0.0, 1.0 - abs(user.target_energy - song.energy))
+        score += energy_score
+        reasons.append(f"your target energy (+{energy_score:.2f})")
+
+        if user.likes_acoustic and song.acousticness > 0.5:
+            score += 0.5
+            reasons.append("your acoustic preference")
+        elif not user.likes_acoustic and song.acousticness <= 0.5:
+            score += 0.5
+            reasons.append("your non-acoustic preference")
+
+        return score, reasons
 
 def load_songs(csv_path: str) -> List[Dict]:
     """
@@ -87,21 +116,20 @@ def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
         score += 2.0
         reasons.append("genre match (+2.0)")
 
-    # Experimental change: disable the mood bonus to test ranking sensitivity.
-    # if user_prefs["favorite_mood"].lower() == song["mood"].lower():
-    #     score += 1.5
-    #     reasons.append("mood match (+1.5)")
+    if user_prefs["favorite_mood"].lower() == song["mood"].lower():
+        score += 1.5
+        reasons.append("mood match (+1.5)")
 
     # Calculate score for energy preference
     energy_diff = abs(user_prefs["target_energy"] - song["energy"])
-    energy_score = max(0, 1.0 - energy_diff)  # Closer energy gets higher score
+    energy_score = 1.5 * max(0, 1.0 - energy_diff)  # Closer energy gets higher score
     score += energy_score
     reasons.append(f"energy match (+{energy_score:.2f})")
 
     # Award points for acoustic preference
     if user_prefs["likes_acoustic"] and song["acousticness"] > 0.5:
-        score += 1.0
-        reasons.append("acoustic preference match (+1.0)")
+        score += 0.5
+        reasons.append("acoustic preference match (+0.5)")
     elif not user_prefs["likes_acoustic"] and song["acousticness"] <= 0.5:
         score += 0.5
         reasons.append("non-acoustic preference match (+0.5)")
